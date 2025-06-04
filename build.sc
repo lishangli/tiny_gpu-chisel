@@ -130,9 +130,9 @@ object playground extends CommonModule {
     ivys.mainargs
   )
 
-  def lazymodule: String = "freechips.rocketchip.system.ExampleRocketSystem"
+  def lazymodule: String = "tinygpu.GpuLazyModule"
 
-  def configs: String = "playground.PlaygroundConfig"
+  def configs: String = "tinygpu.GpuConfig"
 
   def elaborate = T {
     mill.modules.Jvm.runSubprocess(
