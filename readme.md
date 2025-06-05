@@ -1,7 +1,7 @@
 # Tiny GPU(chisel version)
 
 ## Introduction
-This is a project refer to [!tiny-gpu](https://github.com/adam-maj/tiny-gpu). It 
+This is a project refering to [tiny-gpu](https://github.com/adam-maj/tiny-gpu). 
 
 ## Quick Start
 
@@ -118,5 +118,5 @@ git rebase origin/master
 ```
 
 # ToDO
-- [] Add tests
-- [] Fix issues in designs
+- [ ] Add tests
+- [ ] Fix issues in designs
