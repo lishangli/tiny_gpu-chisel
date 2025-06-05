@@ -5,17 +5,17 @@ import chisel3.util._
 import freechips.rocketchip.diplomacy._
 import org.chipsalliance.cde.config.Parameters
 
-class GpuLazyModule(
-  val DATA_MEM_ADDR_BITS: Int = 8,
-  val DATA_MEM_DATA_BITS: Int = 8,
-  val DATA_MEM_NUM_CHANNELS: Int = 4,
-  val PROGRAM_MEM_ADDR_BITS: Int = 8,
-  val PROGRAM_MEM_DATA_BITS: Int = 16,
-  val PROGRAM_MEM_NUM_CHANNELS: Int = 1,
-  val NUM_CORES: Int = 2,
-  val THREADS_PER_BLOCK: Int = 4
-) (implicit p: Parameters) extends LazyModule {
-  lazy val module = new LazyModuleImp(this) {
+class GpuModuleImpl(outer: GpuLazyModule)(implicit p: Parameters)
+  extends LazyModuleImp(outer) { //
+  val DATA_MEM_ADDR_BITS = p(GpuKeys.DataMemAddrBits)
+  val DATA_MEM_DATA_BITS = p(GpuKeys.DataMemDataBits)
+  val DATA_MEM_NUM_CHANNELS = p(GpuKeys.DataMemNumChannels)
+  val PROGRAM_MEM_ADDR_BITS = p(GpuKeys.ProgramMemAddrBits)
+  val PROGRAM_MEM_DATA_BITS = p(GpuKeys.ProgramMemDataBits)
+  val PROGRAM_MEM_NUM_CHANNELS = p(GpuKeys.ProgramMemNumChannels)
+  val NUM_CORES = p(GpuKeys.NumCores)
+  val THREADS_PER_BLOCK = p(GpuKeys.ThreadsPerBlock)
+
   val io = IO(new Bundle {
     // Kernel Execution
     val start  = Input(Bool())
@@ -182,5 +182,20 @@ class GpuLazyModule(
     core.io.data_mem_write_data := core_lsu_write_data
     core.io.data_mem_write_ready := core_lsu_write_ready
   }
-  }
+}
+
+class GpuLazyModule(
+) (implicit p: Parameters) extends LazyModule {
+ // Access the parameters directly from the implicit 'p' object
+  val DATA_MEM_ADDR_BITS = p(GpuKeys.DataMemAddrBits)
+  val DATA_MEM_DATA_BITS = p(GpuKeys.DataMemDataBits)
+  val DATA_MEM_NUM_CHANNELS = p(GpuKeys.DataMemNumChannels)
+  val PROGRAM_MEM_ADDR_BITS = p(GpuKeys.ProgramMemAddrBits)
+  val PROGRAM_MEM_DATA_BITS = p(GpuKeys.ProgramMemDataBits)
+  val PROGRAM_MEM_NUM_CHANNELS = p(GpuKeys.ProgramMemNumChannels)
+  val NUM_CORES = p(GpuKeys.NumCores)
+  val THREADS_PER_BLOCK = p(GpuKeys.ThreadsPerBlock)
+
+  lazy val module = new GpuModuleImpl(this)
+
 }

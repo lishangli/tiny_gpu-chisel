@@ -1,7 +1,11 @@
+// def ammoniteVersion = "2.5.11"
+
 // import Mill dependency
 import mill._
 import mill.define.Sources
 import mill.modules.Util
+import mill.scalalib.scalafmt.ScalafmtModule
+import mill.scalalib.TestModule.ScalaTest
 import scalalib._
 // Hack
 import publish._
@@ -121,6 +125,7 @@ object myhardfloat extends ScalaModule with SbtModule with PublishModule {
 // Dummy
 
 object playground extends CommonModule {
+  override def millSourcePath = os.pwd / "playground"
   override def moduleDeps = super.moduleDeps ++ Seq(myrocketchip, inclusivecache, blocks, shells)
 
   // add some scala ivy module you like here.
@@ -128,7 +133,12 @@ object playground extends CommonModule {
     ivys.oslib,
     ivys.pprint,
     ivys.mainargs
-  )
+  )  ++ Agg(
+      ivy"org.scalatest::scalatest::3.2.19",
+      // for formal flow in future
+      ivy"edu.berkeley.cs::chiseltest:6.0.0"
+      // ivy"org.chipsalliance::chisel-config:6.0.0"
+    )
 
   def lazymodule: String = "tinygpu.GpuLazyModule"
 
@@ -162,6 +172,17 @@ object playground extends CommonModule {
       s"-o=${T.dest}"
     ).call(T.dest)
     PathRef(T.dest)
+  }
+
+  object test extends Tests with TestModule.ScalaTest with ScalafmtModule {
+    def moduleDeps = Seq(playground)
+    override def ivyDeps = super.ivyDeps() ++ Agg(
+      ivy"org.scalatest::scalatest::3.2.19",
+      // for formal flow in future
+      ivy"edu.berkeley.cs::chiseltest:6.0.0"
+      // ivy"org.chipsalliance::chisel-config:6.0.0"
+    )
+    override def testFramework = "org.scalatest.tools.Framework"
   }
 
 }
