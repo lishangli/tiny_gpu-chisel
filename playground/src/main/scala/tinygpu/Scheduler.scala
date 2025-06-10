@@ -6,7 +6,7 @@ import chisel3.util._
 class Scheduler(val THREADS_PER_BLOCK: Int = 4) extends Module {
   val io = IO(new Bundle {
     val start = Input(Bool())
-    val reset = Input(Bool())
+    // val reset = Input(Bool())
     // Control Signals
     val decoded_mem_read_enable = Input(Bool())
     val decoded_mem_write_enable = Input(Bool())
@@ -82,7 +82,7 @@ class Scheduler(val THREADS_PER_BLOCK: Int = 4) extends Module {
     }
   }
 
-  when (io.reset) {
+  when (reset.asBool) {
     current_pc := 0.U
     core_state := IDLE
     done := false.B

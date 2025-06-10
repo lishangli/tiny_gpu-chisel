@@ -133,12 +133,7 @@ object playground extends CommonModule {
     ivys.oslib,
     ivys.pprint,
     ivys.mainargs
-  )  ++ Agg(
-      ivy"org.scalatest::scalatest::3.2.19",
-      // for formal flow in future
-      ivy"edu.berkeley.cs::chiseltest:6.0.0"
-      // ivy"org.chipsalliance::chisel-config:6.0.0"
-    )
+  ) 
 
   def lazymodule: String = "tinygpu.GpuLazyModule"
 
@@ -177,7 +172,7 @@ object playground extends CommonModule {
   object test extends Tests with TestModule.ScalaTest with ScalafmtModule {
     def moduleDeps = Seq(playground)
     override def ivyDeps = super.ivyDeps() ++ Agg(
-      ivy"org.scalatest::scalatest::3.2.19",
+      // ivy"org.scalatest::scalatest::3.2.19",
       // for formal flow in future
       ivy"edu.berkeley.cs::chiseltest:6.0.0"
       // ivy"org.chipsalliance::chisel-config:6.0.0"

@@ -7,6 +7,7 @@ import org.chipsalliance.cde.config._
 import org.scalatest.flatspec.AnyFlatSpec // 使用 AnyFlatSpec
 import freechips.rocketchip.diplomacy.LazyModule
 import scala.util.control.Breaks._
+import scala.util.control.BreakControl
 
 class GpuTester extends AnyFlatSpec with ChiselScalatestTester {
   "Gpu" should "run a simple test" in {
@@ -14,13 +15,19 @@ class GpuTester extends AnyFlatSpec with ChiselScalatestTester {
     implicit val p: Parameters = (new MySpecificGpuConfig).toInstance
 
     // 2. 实例化 LazyModule。如果 GpuLazyModule 定义为 (implicit p: Parameters)，则不需要 (p)。
-    val gpuLazyModule = LazyModule(new GpuLazyModule)
+    // val gpuLazyModule = LazyModule(new GpuLazyModule)
+    class TestTop extends Module {
+      val dut = LazyModule(new GpuLazyModule).module
+      dut.clock := clock
+      dut.reset := reset
+    }
+    println("test  123")
+    println(chisel3.BuildInfo.version)
 
-    println(gpuLazyModule.module.thread_count)
-
+    //println(gpuLazyModule.module.thread_count)
     // 3. 将 LazyModule 的实际硬件模块传递给 test 函数
-    test(gpuLazyModule.module) { dut =>
-       withClockAndReset(dut.clock, dut.reset) {
+    test(LazyModule(new GpuLazyModule).module) { dut =>
+        {
       // 初始化所有输入端口到安全状态
       dut.io.device_control_write_enable.poke(false.B)
       dut.io.device_control_data.poke(0.U)
@@ -30,6 +37,9 @@ class GpuTester extends AnyFlatSpec with ChiselScalatestTester {
       dut.io.program_mem_read_ready.foreach(_.poke(true.B)) // 假设总是准备好读取
       dut.io.data_mem_read_ready.foreach(_.poke(true.B))   // 假设总是准备好读取
       dut.io.data_mem_write_ready.foreach(_.poke(true.B))  // 假设总是准备好写入
+
+      dut.io.program_mem_read_data.foreach(_.poke(0.U))
+      dut.io.data_mem_read_data.foreach(_.poke(0.U))
 
       // 等待几个周期让模块稳定
       dut.clock.step(5)
@@ -48,7 +58,7 @@ class GpuTester extends AnyFlatSpec with ChiselScalatestTester {
           finished = true // 标记为完成
           // 在这里可以添加其他断言，例如检查最终结果等
           // dut.io.some_result_output.expect(expected_value.U)
-          break
+          // break
         }
         dut.clock.step(1)
       }

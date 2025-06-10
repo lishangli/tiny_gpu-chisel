@@ -109,13 +109,13 @@ class Core(
   // scheduler.io.reset                  := reset.asBool
   scheduler.io.start                  := io.start
   scheduler.io.fetcher_state          := fetcher_state
-  scheduler.io.core_state             := core_state
+  core_state  := scheduler.io.core_state 
   scheduler.io.decoded_mem_read_enable:= decoded_mem_read_enable
   scheduler.io.decoded_mem_write_enable:= decoded_mem_write_enable
   scheduler.io.decoded_ret            := decoded_ret
   scheduler.io.lsu_state              := lsu_state
-  scheduler.io.current_pc             := current_pc
-  next_pc                             := scheduler.io.next_pc
+  current_pc := scheduler.io.current_pc
+  scheduler.io.next_pc := next_pc
   io.done                             := scheduler.io.done
 
   // 线程实例
